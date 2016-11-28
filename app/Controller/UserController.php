@@ -3,6 +3,8 @@
 namespace Controller;
 
 use Model\UtilisateursModel;
+use W\Security\AuthentificationModel;
+
 
 class UserController extends BaseController
 {
@@ -23,5 +25,61 @@ class UserController extends BaseController
 		$this -> show('users/list', array('listUsers' => $usersList));
 	}
 	
+	public function login()	{
+		// On va utiliser le modèle d'authentifaction et plus particulièrement la méthode isValidLoginInfos à laquelle on passera en paramètre le pseudo/email et le password envoyés en POST par l'utilisateur 
+		// Une fois cette vérification faite, on récupère l'utilisateur en BDD on le connecte et on le redirige vers la page d'accueil 
+
+
+		if (!empty($_POST)) {
+			// 1) Je vérifie la non-vacuité du pseudo en POST 
+			if (!empty($_POST['pseudo'])) {
+				// Je mets un message d'erreur
+			}
+			// 1) Je vérifie la non-vacuité du mdp en POST
+			if (!empty($_POST['mot_de_passe'])) {
+				// Je mets un message d'erreur
+			}
+
+			$authentifaction = new AuthentificationModel();
+
+			if (!empty($_POST['pseudo']) && !empty($_POST['mot_de_passe'])) {
+				//Vérification de l'existence de l'utilisateur
+				$idUser = $authentifaction->isValidLoginInfo($_POST['pseudo'], $_POST['mot_de_passe']); 
+
+				// Si l'utilisateur existe, on le connecte
+				if ($idUser !== 0) {
+					$utilisateurModel = new UtilisateursModel();
+
+					//Je récupère les infos de l'utilisateur et je m'en sers pour le connecter au site à l'aide de $authentifaction->logUserIn($userInfos);
+					$userInfos = $utilisateurModel -> find($idUser);
+					$authentifaction -> logUserIn($userInfos);
+
+					//Une fois que l'utilisateur est connec, je le redirige vers l'acceil 
+					$this->redirectToRoute('default_home');
+				}else{
+					// Si les infos de connexion sont incorrectes, on avertit l'utilisateur
+				}
+			}
+
+		}
+
+		$this->show('users/login', array('datas' => isset($_POST) ? $_POST : array()));
+		// chemin à partir de Views : users/login.php
+		// array('datas' => isset($_POST) ? $_POST : array() permet d'injecter des informations à la vue
+	}
+
+
+	public function logout(){
+		$authentifaction = new AuthentificationModel();
+		$authentifaction->logUserOut();
+		$this->redirectToRoute('login');
+	}
+
+
+
+
+
+
 
 }
+

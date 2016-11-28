@@ -16,6 +16,10 @@
 		// i: = int, un entier 
 		// id = correspond au paramètre id de la méthode seeSalon
 
+		['GET|POST', '/login','User#login', 'login'],
+		['GET', '/logout','User#logout', 'logout'],
+
+
 
 
 	);
