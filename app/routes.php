@@ -18,6 +18,8 @@
 
 		['GET|POST', '/login','User#login', 'login'],
 		['GET', '/logout','User#logout', 'logout'],
+		['GET|POST', '/register','User#register', 'register'],
+
 
 
 

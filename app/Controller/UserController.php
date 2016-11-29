@@ -32,17 +32,17 @@ class UserController extends BaseController
 
 		if (!empty($_POST)) {
 			// 1) Je vérifie la non-vacuité du pseudo en POST 
-			if (!empty($_POST['pseudo'])) {
-				// Je mets un message d'erreur
+			if (empty($_POST['pseudo'])) {
+				$this->getFlashMessenger()->error('Veuillez entrer un pseudo');
 			}
 			// 1) Je vérifie la non-vacuité du mdp en POST
-			if (!empty($_POST['mot_de_passe'])) {
-				// Je mets un message d'erreur
+			if (empty($_POST['mot_de_passe'])) {
+				$this->getFlashMessenger()->error('Veuillez entrer un mot de passe');
 			}
 
 			$authentifaction = new AuthentificationModel();
 
-			if (!empty($_POST['pseudo']) && !empty($_POST['mot_de_passe'])) {
+			if (! $this->getFlashMessenger()->hasErrors()) {
 				//Vérification de l'existence de l'utilisateur
 				$idUser = $authentifaction->isValidLoginInfo($_POST['pseudo'], $_POST['mot_de_passe']); 
 
@@ -57,7 +57,7 @@ class UserController extends BaseController
 					//Une fois que l'utilisateur est connec, je le redirige vers l'acceil 
 					$this->redirectToRoute('default_home');
 				}else{
-					// Si les infos de connexion sont incorrectes, on avertit l'utilisateur
+					$this->getFlashMessenger()->error('Vos informations de connexion sont incorrectes');
 				}
 			}
 
@@ -73,6 +73,10 @@ class UserController extends BaseController
 		$authentifaction = new AuthentificationModel();
 		$authentifaction->logUserOut();
 		$this->redirectToRoute('login');
+	}
+
+	public function register(){
+		$this->show('users/register');
 	}
 
 
