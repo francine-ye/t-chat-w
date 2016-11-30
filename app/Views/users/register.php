@@ -19,7 +19,6 @@ function afficheCheck($valeurAttendue){
 <?php $this->start('main_content'); ?>
 
 <h2> Inscription d'un utilisateur </h2>
-	<?php $fmsg->display(); ?>
 
 <form action="<?php echo $this->url('register');?>" method="POST" enctype="multipart/form-data">
 	<!-- pseudo email avatar password sexe avatar -->

@@ -33,6 +33,7 @@ aside, main {
 
 main {
 	padding: 15px;
+	width: 87%;
 }
 
 aside {
@@ -103,6 +104,7 @@ main p {
 
 .messages li{
 	list-style-type: none;
+	margin: 1rem 0;
 }
 
 
@@ -132,4 +134,31 @@ main p {
 textarea{
 	margin: 1rem 0;
 	display: block;
+}
+
+.messages > li > *{
+   	vertical-align: middle;
+}
+
+span.avatar{
+	display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-right: 1rem;
+
+}
+
+.avatar img{
+	max-width: 100%;
+	display: block;
+}
+
+.messages{
+	margin: 0;
+	padding: 0;
+	flex : 1;
+	overflow-y: scroll;
+	height: calc(100vh - 107px);
 }

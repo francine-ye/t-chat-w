@@ -4,7 +4,6 @@
 <?php $this->start('main_content'); ?>
 
 	<h2>Connectez-vous à T'Chat</h2>
-	<?php $fmsg->display(); ?>
 
 	<form action="<?php echo $this->url('login') ?>" method="POST">
 		<p>

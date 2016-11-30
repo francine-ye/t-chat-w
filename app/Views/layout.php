@@ -25,11 +25,20 @@
  						<li> <a href="<?php echo $this -> url('see_salon', array('id' => $salon['id']))?>"> <?php echo $this->e($salon['nom']); ?> </a> </li>
  					<?php endforeach; ?>
  				</ul>
- 				<a class="button" href="<?php echo $this -> url('users_list') ; ?>" title="Liste des utilisateurs de T'Chat"> Liste des utilisateurs</a>
+ 				<?php if (in_array($w_user['role'], ['admin','superadmin'])) :?>
+ 					<a class="button" href="<?php echo $this -> url('users_list') ; ?>" title="Liste des utilisateurs de T'Chat"> Liste des utilisateurs</a>
+ 				<?php endif; ?>	
+ 				
+
+ 				<?php if ($w_user) : ?>
  				<a class="button" href="<?php echo $this -> url('logout')?>" title="Se déconnecter de T'Chat"> Déconnexion</a>
+ 				<?php else : ?>
+ 				<a class="button" href="<?php echo $this -> url('login')?>" title="Se connecter à T'Chat"> Connexion</a>
+ 				<?php endif; ?>
+
  			</nav>
 		</aside><main>
-
+			<?php $fmsg->display(); ?>
 			<section>
 				<?= $this->section('main_content') ?>
 			</section>
@@ -42,6 +51,19 @@
 		  src="https://code.jquery.com/jquery-2.2.4.min.js"
 		  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
 		  crossorigin="anonymous"></script>
+
 		  <script type="text/javascript" src="<?php echo $this->assetUrl('js/close-flash-messages.js') ?>"></script>
+
+		  <?php $sectionJavascripts = $this->section('javascripts') ; 
+		  	if ($sectionJavascripts) {
+		  		echo $sectionJavascripts;
+		  	}
+		  ?>
+
+
+
+
+		  
+
 	</body>	
 </html>
