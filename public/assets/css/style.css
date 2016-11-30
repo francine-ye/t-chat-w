@@ -88,10 +88,12 @@ main p {
 .button {
 	text-decoration: none;
 	border: none;
-	padding: 5px;
+	padding: 0.5rem 1rem;
 	background: gray;
 	border-radius: 5px;
 	box-shadow: 0 0 5px #222;
+	display: block;
+	margin: 1rem;
 }
 
 .personne{
