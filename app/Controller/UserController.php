@@ -100,7 +100,7 @@ class UserController extends BaseController
 				"sexe" => v::in(['femme','homme','non-defini']),
 
 				"avatar" => v::optional(
-					v::image()->size('1MB')
+					v::image()->size('0', '1MB')
 					->uploaded()
 				)
 			);
@@ -160,12 +160,8 @@ class UserController extends BaseController
 
 				//INSERTION EN BDD sauf le boutton send
 				$utilisateurModel = new UtilisateursModel();
-				$utilisateurModel->insert($datas);
 				unset($datas['send']);
-
-				// Connexion suite à l'inscription
-				$utilisateurModel = new UtilisateursModel();
-				$userInfos = $utilisateurModel->find($datas);
+				$userInfos=$utilisateurModel->insert($datas);
 				$authentifaction -> logUserIn($userInfos);
 
 				$this->getFlashMessenger()->success('Vous vous êtes inscrit à T-Chat');
