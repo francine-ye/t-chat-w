@@ -1,22 +1,19 @@
-<?php 
+<?php
+namespace Validation\Rules;
 /**
- * Cette classe sert à étendre les fonctionnalités de la bibliothèque respect/validation en y ajoutant un nouveau validateur
+ * Description of UsernameNotExists
+ * Cette classe sert à étendre les fonctionnalités de la bibliothèque respect/validation
+ * en y ajoutant un nouveau validateur
+ * @author Admin
  */
 
-namespace Validation\Rules;
 use Respect\Validation\Rules\AbstractRule;
 use W\Model\UsersModel;
 
-
-class UsernameNotExists extends AbstractRule{
-	public function validate($pseudo){
+class UsernameNotExists extends AbstractRule {
+	
+	public function validate($pseudo) {
 		$userModel = new UsersModel();
 		return ! $userModel->usernameExists($pseudo);
-
 	}
-
 }
-
-
-
- ?>

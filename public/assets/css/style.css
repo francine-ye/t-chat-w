@@ -1,164 +1,200 @@
 html, body {
-	height: 100%;
+    height: 100%;
 }
 
 body {
-	font-family: arial, sans-serif;
-	background-color: #353535;
-	color: white;
-	text-shadow: 0 0 4px black;
-	height: 100%;
-	padding-top: 97px;
-	position: relative;
+    font-family: arial, sans-serif;
+    background-color: #353535;
+    color: white;
+    text-shadow: 0 0 4px black;
+    height: 100%;
+    padding-top: 97px;
+    position: relative;
 }
 
 header {
-	top: 0;
-	padding: 30px 20px;
-	background-color: #505050;
-	box-shadow: 0 0 5px #272727;
-	border-bottom: 1px solid #222;
-	z-index: 1000;
-	position: absolute;
-	width: 100%;
-	height: 97px;
+    top: 0;
+    padding: 30px 20px;
+    background-color: #505050;
+    box-shadow: 0 0 5px #272727;
+    border-bottom: 1px solid #222;
+    z-index: 1000;
+    position: absolute;
+    width: 100%;
+    height: 97px;
 }
 
 aside, main {
-	display: inline-block;
-	height: 100%;
-	vertical-align: top;
-	font-size: 0.85em;
+    display: inline-block;
+    height: 100%;
+    vertical-align: top;
+    font-size: 0.85em;
 }
 
 main {
-	padding: 15px;
-	width: 87%;
+    padding: 15px 15px 30px;
+    width: calc(100% - 230px);
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
 }
 
 aside {
-	background-color: #444;
-	box-shadow: 0 0 5px #272727;
-	overflow: hidden;
+    background-color: #444;
+    box-shadow: 0 0 5px #272727;
+    overflow: hidden;
+    width: 230px;
 }
 
 aside h3 {
-	padding: 10px;
-	text-align: center;
-	box-shadow: 0 0 4px #222;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 0 4px #222;
 }
 
 aside ul {
-	padding: 0;
-	margin: 0px;
+    padding: 0;
+    margin: 0px;
 }
 
 aside ul li {
-	list-style: none;
+    list-style: none;
 }
 
 aside ul li a {
-	text-decoration: none;
-	display: block;
-	padding: 10px 15px;
-	border-bottom: 1px solid #353535;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    border-bottom: 1px solid #353535;
 }
 
 aside ul li:last-child a{
-	border-bottom: none;
+    border-bottom: none;
 }
 
 aside ul li a:hover {
-	background-color: #555555;
+    background-color: #555555;
 }
 
 aside ul li a.selected {
-	background-color: #353535;
-	box-shadow: 0 0 5px black inset;
+    background-color: #353535;
+    box-shadow: 0 0 5px black inset;
 }
 
 main h2 {
-	padding: 10px 0;
-	font-size: 1.5em;
+    padding: 10px 0;
+    font-size: 1.5em;
 }
 
 main p {
-	margin: 15px 0;
+    margin: 15px 0;
 }
 
 .button {
-	text-decoration: none;
-	border: none;
-	padding: 0.5rem 1rem;
-	background: gray;
-	border-radius: 5px;
-	box-shadow: 0 0 5px #222;
-	display: block;
-	margin: 1rem;
+    text-decoration: none;
+    border: none;
+    padding: 5px;
+    background: gray;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #222;
 }
 
-.personne{
-	font-weight: bold;
-	line-height: 2rem;
+.messages {
+    margin: 0px;
+    padding: 0;
+    flex: 1;
+    overflow-y: scroll;
+    height: calc(100vh - 187px);
 }
 
-.messages li{
-	list-style-type: none;
-	margin: 1rem 0;
+.messages li {
+    list-style: none;
+    margin: 15px 0;
 }
 
-
-.form-message{
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	left: 0;
+.messages li .personne {
+    font-weight: bold;
 }
 
-.form-message input, .form-message textarea{
-	display: inline-block;
-	vertical-align: middle;
-	height: 30px;
-}	
-
-.form-message, textarea{
-	width: calc(100% - 90px);
-	height: 90px
+form input, form textarea {
+    color: white;
+    background : #252525;
+    box-shadow : 0 0 5px black inset;
+    border: 1px solid gray;
+    padding : 2px;
 }
 
-.form-message input[type="submit"]{
-	border-radius: 0;
-	width: 90px;
+.form-message {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
 }
 
-textarea{
-	margin: 1rem 0;
-	display: block;
+.form-message input, .form-message textarea {
+    vertical-align: middle;
+    height: 30px;
+    width: calc(100% - 90px);
 }
 
-.messages > li > *{
-   	vertical-align: middle;
+.form-message input[type="submit"] {
+    border-radius: 0;
+    width: 90px;
 }
 
-span.avatar{
-	display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 1rem;
+form > p {
+    margin: 20px;
+}
+
+form > p > * {
+    display: inline-block;
+}
+
+form label {
+    width: 15%;
+}
+
+.messages > li > * {
+    vertical-align: middle;
+}
+
+span.avatar {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border-radius: 999px;
     overflow: hidden;
-    margin-right: 1rem;
-
+    margin-right: 20px;
 }
 
-.avatar img{
-	max-width: 100%;
-	display: block;
+span.avatar img {
+    display: block;
+    max-width: 100%;
 }
 
-.messages{
-	margin: 0;
-	padding: 0;
-	flex : 1;
-	overflow-y: scroll;
-	height: calc(100vh - 107px);
+.alert {
+	padding: 5px;
+	border-radius: 5px;
+	background: rgb(25,25,25);
 }
+
+.alert .close {
+	margin-right: 15px;
+	color: white;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.alert.alert-success {
+	background: green;
+}
+
+.alert.alert-danger {
+	background: red;
+}
+
+.alert.alert-warning {
+	background: yellow;
+}
+

@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-
 class TestController extends BaseController
 {
 
@@ -12,8 +11,6 @@ class TestController extends BaseController
 	public function monAction()
 	{
 		$this->show('test/index');
-		// test = nom du dossier
-		// index = nom du fichier
 	}
 
 }

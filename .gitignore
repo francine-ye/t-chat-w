@@ -2,4 +2,5 @@
 app/config.php
 /phpDocumentor.phar
 *.log
+/nbproject/private/
 /public/assets/uploads/*

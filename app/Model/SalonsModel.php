@@ -1,11 +1,14 @@
 <?php
 
 namespace Model;
-use W\Model\Model;
+
+use \W\Model\Model;
+
 /**
-* 
-*/
-class SalonsModel extends Model
-{
+ * Description of SalonsModel
+ *
+ * @author Admin
+ */
+class SalonsModel extends Model {
 	
 }

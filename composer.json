@@ -1,14 +1,14 @@
 {
     "name": "t-chat-w",
-    "description": "Version W du projet t-chat",
+    "description": "Le version W du projet tchat",
     "version": "1.0.0",
     "minimum-stability": "dev",
     "license": "MIT",
     "prefer-stable": true,
     "authors": [
         {
-            "name": "Francine YE",
-            "email": "francine.ye@gmail.com",
+            "name": "Thibault Truffert",
+            "email": "thibaulttruffert@hotmail.com",
             "role": "Lead Developer"
         }
     ],

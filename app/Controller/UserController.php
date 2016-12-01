@@ -5,184 +5,236 @@ namespace Controller;
 use Model\UtilisateursModel;
 use W\Security\AuthentificationModel;
 use \Respect\Validation\Validator as v;
-use \Respect\Validation\Exceptions\NestedValidationException;
+use \Respect\Validation\Exceptions\ValidationException;
 
 class UserController extends BaseController
 {
 	/**
-	 * 	Cette fonction sert à afficher la liste des utilisateurs 
+	 * Cette fonction sert à afficher la liste des utilisateurs
 	 */
-	public function listUsers()
-	{
-
-		$this->allowTo(['admin', 'superadmin']);
-
-		/**
-		 * J'instancie depuis l'action du controler un modele d'utilisateurs pour pouvoir accéder à la liste des utilisateurs
+	public function listUsers() {
+//		$usersList = array(
+//			'Googleman', 'Pausewoman', 'Pauseman', 'Roland'
+//		);
+		
+		/*
+		 * Ici j'instancie depuis l'action du contrôleur un modèle d'utilisateurs
+		 * pour pouvoir accéder à la liste des utilisateurs
 		 */
+		
+		$this->allowTo(['admin', 'superadmin']);
+		
 		$usersModel = new UtilisateursModel();
-		$usersList = $usersModel -> findAll();
-
-
-		//	$usersList = array('GoogleMan', 'Pausewoman','Yaké', 'Roland');
-		/* Affiche la vue présente dans app/views/users/list.php et y injecte le tablaeu $usersList sous un nouveau nom $listUsers */
-		$this -> show('users/list', array('listUsers' => $usersList));
+		
+		$usersList = $usersModel->findAll();
+		
+		// la ligne suivante affiche la vue présente dans app/Views/users/list.php
+		// et y injecte le tableau $usersList sous un nouveau nom $listUsers
+		$this->show('users/list', array('listUsers' => $usersList));
 	}
 	
-	public function login()	{
-		// On va utiliser le modèle d'authentifaction et plus particulièrement la méthode isValidLoginInfos à laquelle on passera en paramètre le pseudo/email et le password envoyés en POST par l'utilisateur 
-		// Une fois cette vérification faite, on récupère l'utilisateur en BDD on le connecte et on le redirige vers la page d'accueil 
-
-
-		if (!empty($_POST)) {
-			// 1) Je vérifie la non-vacuité du pseudo en POST 
-			if (empty($_POST['pseudo'])) {
+	public function login() {
+//		 on va utiliser le model d'Authentification et plus particulièrement
+//		 la méthode isValidLoginInfos à laquelle on passera en param
+//		 le pseudo/email et le password envoyés en post par l'utilisateur
+//		 une fois cette vérification faite, on récupère l'utilisateur en bdd
+//		 on le connecte et on le redirige vers la page d'accueil
+		if( !empty($_POST)) {
+			// je vérifie la non-vacuité du pseudo en POST
+			if( empty($_POST['pseudo'])) {
+				// si le pseudo est vide on ajoute un message d'erreur
 				$this->getFlashMessenger()->error('Veuillez entrer un pseudo');
 			}
-			// 1) Je vérifie la non-vacuité du mdp en POST
-			if (empty($_POST['mot_de_passe'])) {
+			// je vérifie la non-vacuité du mot de passe en POST
+			if( empty($_POST['mot_de_passe'])) {
+				// si le mot de passe est vide on ajoute un message d'erreur
 				$this->getFlashMessenger()->error('Veuillez entrer un mot de passe');
 			}
-
-			$authentifaction = new AuthentificationModel();
-
-			if (! $this->getFlashMessenger()->hasErrors()) {
-				//Vérification de l'existence de l'utilisateur
-				$idUser = $authentifaction->isValidLoginInfo($_POST['pseudo'], $_POST['mot_de_passe']); 
-
-				// Si l'utilisateur existe, on le connecte
-				if ($idUser !== 0) {
+			
+			$auth = new AuthentificationModel();
+			
+			if( ! $this->getFlashMessenger()->hasErrors()) {
+				// vérification de l'existence de l'utilisateur
+				$idUser = $auth->isValidLoginInfo($_POST['pseudo'], $_POST['mot_de_passe']);
+				
+				// si l'utilisateur existe bel et bien...
+				if($idUser !== 0){
 					$utilisateurModel = new UtilisateursModel();
-
-					//Je récupère les infos de l'utilisateur et je m'en sers pour le connecter au site à l'aide de $authentifaction->logUserIn($userInfos);
-					$userInfos = $utilisateurModel -> find($idUser);
-					$authentifaction -> logUserIn($userInfos);
-
-					//Une fois que l'utilisateur est connec, je le redirige vers l'acceil 
+					
+					// ... je récupère les infos de l'utilisateur et je m'en
+					// sers pour le connecter au site à l'aide de $auth->logUserIn
+					$userInfos = $utilisateurModel->find($idUser);
+					$auth->logUserIn($userInfos);
+					
+					// une fois l'utilisateur connecté, je le redirige vers l'accueil
+					$this->getFlashMessenger()->success('Vous vous êtes connecté avec succès !');
 					$this->redirectToRoute('default_home');
-				}else{
+				} else {
+					// les infos de connexion sont incorrectes, on avertit 
+					// l'utilisateur
 					$this->getFlashMessenger()->error('Vos informations de connexion sont incorrectes');
 				}
+				
 			}
-
+			
 		}
-
+		
 		$this->show('users/login', array('datas' => isset($_POST) ? $_POST : array()));
-		// chemin à partir de Views : users/login.php
-		// array('datas' => isset($_POST) ? $_POST : array() permet d'injecter des informations à la vue
 	}
-
-
-	public function logout(){
-		$authentifaction = new AuthentificationModel();
-		$authentifaction->logUserOut();
+	
+	public function logout() {
+		$auth = new AuthentificationModel();
+		$auth->logUserOut();
 		$this->redirectToRoute('login');
 	}
-
-	public function register(){
-		if (!empty($_POST)) {
-			//Permet de dire à respect\validation où (namespace) aller chercher nos rules
+	
+	public function register() {
+		
+		$user = $this->getUser();
+		
+		$datas = $user ? $user : array();
+				
+		if( ! empty($_POST)) {
+			
+			// on indique à respect validation que nos règles de validation
+			// seront accessibles depuis le namespace Validation\Rules
 			v::with("Validation\Rules");
 
+			// Je déclaire mes validateurs pseudo et email à part car je souhaite effectuer des vérifications supplémentaires uniquement si l'utilisateur est en mode insertion (cad pas connecté)
+			$pseudoValidator = v::length(3,50)
+					->alnum()
+					->noWhitespace()
+					->setName('Nom d\'utilisateur');
+			
+			$emailValidator = v::email()
+					->setName('Email');
+			
+			// Si l'utilisateur n'est pas connecté (mode insertion) on ajoute les conditions 'l'email ne doit pas déjà exister' et 'le nom d'utilisateur ne doit pas exister'
+			if( ! $user) {
+				$pseudoValidator->usernameNotExists();
+				$emailValidator->emailNotExists();
+			}
+			
 			$validators = array(
-				"pseudo" => v::length(3,50)
-				->alnum()
-				->noWhiteSpace()
-				->usernameNotExists()
-				->setName('Nom d\'utilisateur'), 
-
-				"email" => v::email()
-				->EmailNotExists()
-				->setName('Email'),
-
-				"mot_de_passe" => v::length(3,50)
-				->noWhiteSpace()
-				->alnum()
-				->setName('Mot de passe'), 
-
-				"sexe" => v::in(['femme','homme','non-defini']),
-
-				"avatar" => v::optional(
-					v::image()->size('0', '1MB')
-					->uploaded()
-				)
+				'pseudo' => $pseudoValidator,
+				
+				'email' => $emailValidator,
+				
+				'mot_de_passe' => v::length(3,50)
+					->alnum()
+					->noWhiteSpace()
+					->setName('Mot de passe'),
+				
+				'sexe' => v::in(array('femme', 'homme', 'non-défini'))
+					->setName('Sexe'),
+				
+				'avatar' => v::optional(
+						v::image()
+						->size('0', '1MB')
+						->uploaded()
+					)
+				
 			);
-
+			
 			$datas = $_POST;
-
-			//On ajoute le chemin vers le fichier d'avatar qui a été uploadé s'il y en a
-			if (!empty($_FILES['avatar']['tmp_name'])) {
-				// Je stocke en donnée à valider le chemin vers la localisation temporaire de l'avatar
+			
+			// on ajouter le chemin vers le fichier d'avatar qui a été uploadé
+			// (s'il y en a un)
+			
+			if( !empty($_FILES['avatar']['tmp_name'])) {
+				// je stocke en données à valider le chemin vers la localisation
+				// temporaire de l'avatar
 				$datas['avatar'] = $_FILES['avatar']['tmp_name'];
-			}else{
-				//Sinon je laisse le champ vide
+			} else {
+				// sinon je laisse ce champ vide
 				$datas['avatar'] = '';
 			}
-
-
-			// Je parcours la liste de mes validators en récupérant aussi le nom du champ en clé 
+			
+			// localisation rapide de mes messages d'erreur (devrait être déclaré 
+			// dans un fichier à part)
+			$trads = array(
+				'alnum' => '{{name}} ne doit contenir que des caractères alphanumériques',
+				'size' => '{{name}} doit avoir une taille comprise entre {{minSize}} et {{maxSize}}',
+				'upload' => '{{name}} n\'a pas été uploadé correctement',
+				'length' => '{{name}} doit avoir une longueur comprise entre {{minValue}} et {{maxValue}} caractères',
+				'noWhitespace' => '{{name}} ne doit pas contenir d\'espace vide',
+				'in' => '{{name}} doit être compris dans {{haystack}}',
+				'image' => '{{name}} doit être une image'
+			);
+			// je parcours la liste de mes validateurs en récupérant aussi le
+			// nom du champ en clé
 			foreach ($validators as $field => $validator) {
-				// La méthode assert renvoieune exception de type NestedValidationException qui nous permet de récupérer le(s) message(s) d'erreur en cas d'erreur
+				// la méthode assert renvoie une exception de type NestedValidationException
+				// qui nous permet de récupérer le ou les messages d'erreur
+				// en cas d'erreur.
 				try{
-					// On essaye de valider la donnée. 
-					//Si une exception se produit, c'est le bloc catch qui sera exécuté
-					$validator->assert(isset($datas[$field]) ? $datas[$field] : '');
-				}
-				// l'excetpion $ex sera du type NestedValidationException
-				catch (NestedValidationException $ex){
-					$fullMessage = $ex->getFullMessage();
-					$this->getFlashMessenger()->error($fullMessage);
+					// on essaye de valider la donnée
+					// si une exception se produit, c'est le bloc catch qui sera
+					// exécuté
+					$validator->check(isset($datas[$field]) ? $datas[$field] : '');
+				} catch (ValidationException $ex) {
+					$ex->setTemplate($trads[$ex->getId()]);
+					$mainMessage = $ex->getMainMessage();
+					$this->getFlashMessenger()->error($mainMessage);
 				}
 			}
-			if (!$this->getFlashMessenger()->hasErrors()) {
-				//Si on n'a pas rencontré d'erreur, on procède à l'insertion du nouvel utilisateur 
-				//Avant l'insertion, on doit faire deux choses: 
-				//		- Déplacer l'avatar du fichier temporaire vers une localisation 		le dossier avatar/
-				//		- Hasher le password
-
-
-				// On hashe d'abord le mot de passe. On utilise pour cela le modèle AuthentificationModel pour rester cohérent avec le framework
-				$authentifaction = new AuthentificationModel();
-				$datas['mot_de_passe'] = $authentifaction->hashPassword($datas['mot_de_passe']);
-
-				//On déplace l'avatar vers le dossier avatar/
-				if (!empty($_FILES['avatar']['tmp_name'])) {
+			
+			if( ! $this->getFlashMessenger()->hasErrors()) {
+				// si on n'a pas rencontré d'erreur, on procède à l'insertion
+				// du nouvel utilisateur
+				
+				// avant l'insertion, on doit faire deux choses :
+				// - déplacer l'avatar du fichier temporaire vers le dossiers avatars/
+				// - hâcher le mot de passe
+				
+				// on hâche d'abord le mot de passe. On utilise pour cela le modèle
+				// AuthentificationModel pour rester cohérent avec le framework
+				
+				$auth = new AuthentificationModel(); 
+				
+				$datas['mot_de_passe'] = $auth->hashPassword($datas['mot_de_passe']);
+				
+				// on déplace l'avatar vers le dossier avatars
+				
+				if( ! empty($_FILES['avatar']['tmp_name'])) {
 					$initialAvatarPath = $_FILES['avatar']['tmp_name'];
-					$avatarNewName = md5(time().uniqid());
+					$avatarNewName = md5(time() . uniqid());
+
 					$targetPath = realpath('assets/uploads');
+					
 					move_uploaded_file($initialAvatarPath, $targetPath.'/'.$avatarNewName);
 
-					// On met à jour le nouveau nom de l'avatar dans $datas 
+					// on met à jour le nouveau nom de l'avatar dans $datas
 					$datas['avatar'] = $avatarNewName;
-				}else{
-					$datas['avatar'] = 'default.jpg';
-
+				} else {
+					$datas['avatar'] = 'default.png';
 				}
 				
 				
-
-				//INSERTION EN BDD sauf le boutton send
-				$utilisateurModel = new UtilisateursModel();
+				$utilisateursModel = new UtilisateursModel();
+				
 				unset($datas['send']);
-				$userInfos=$utilisateurModel->insert($datas);
-				$authentifaction -> logUserIn($userInfos);
-
-				$this->getFlashMessenger()->success('Vous vous êtes inscrit à T-Chat');
+				
+				// POUR MAJ DU PROFIL 
+				if($user) {
+					// UPDATE utilisateurs SET ... WHERE id = ...
+					$utilisateursModel->update($datas, $user['id']);
+					$auth = new AuthentificationModel();
+					$this->getFlashMessenger()->success('Vous avez bien mis à jour votre profil');
+					if( ! $auth->refreshUser()) {
+						$this->getFlashMessenger()->warning('Nous n\'avons pas été en mesure de vous reconnecter');
+					}
+				} else {
+					$this->getFlashMessenger()->success('Vous vous êtes bien inscrit à T\'Chat !');
+					$userInfos = $utilisateursModel->insert($datas);
+					$auth->logUserIn($userInfos);
+				}
+				
 				$this->redirectToRoute('default_home');
-
 			}
 		}
-
-
-
-		$this->show('users/register');
+		
+		$this->show('users/register',  array('datas' => $datas));
 	}
 
-
-
-
-
-
-
 }
-

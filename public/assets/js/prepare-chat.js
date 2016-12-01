@@ -1,40 +1,7 @@
-$(function(){
-	$('textarea[name="message"]').focus();
-	$('.message').scrollTop($('messages').height());
+$(document).ready(function() {
+   $('input[name="message"]').focus();
+   $('.messages').scrollTop($('.messages').height());
+   
+});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}); // FIN DU DOM;

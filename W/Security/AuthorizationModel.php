@@ -8,16 +8,14 @@ use \W\Security\AuthentificationModel;
 /**
  * Gère l'accès aux pages en fonction des droits utilisateurs
  */
-class AuthorizationModel
-{
+class AuthorizationModel {
 
 	/**
 	 * Vérifie les droits d'accès de l'utilisateur en fonction de son rôle
 	 * @param  string  	$role Le rôle pour lequel on souhaite vérifier les droits d'accès
 	 * @return boolean 	true si droit d'accès, false sinon
 	 */
-	public function isGranted($role)
-	{
+	public function isGranted($role) {
 		$app = getApp();
 		$roleProperty = $app->getConfig('security_role_property');
 
@@ -26,12 +24,12 @@ class AuthorizationModel
 		$loggedUser = $authentificationModel->getLoggedUser();
 
 		// Si utilisateur non connecté
-		if (!$loggedUser){
+		if (!$loggedUser) {
 			// Redirige vers le login
 			$this->redirectToLogin();
 		}
 
-		if (!empty($loggedUser[$roleProperty]) && $loggedUser[$roleProperty] === $role){
+		if (!empty($loggedUser[$roleProperty]) && $loggedUser[$roleProperty] === $role) {
 			return true;
 		}
 
@@ -41,8 +39,7 @@ class AuthorizationModel
 	/**
 	 * Redirige vers la page de connexion
 	 */
-	public function redirectToLogin()
-	{
+	public function redirectToLogin() {
 		$app = getApp();
 
 		$controller = new \W\Controller\Controller();
